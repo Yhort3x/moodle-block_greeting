@@ -40,9 +40,25 @@ class block_greeting extends block_base {
         if ($this->content !== null) {
             return $this->content;
         }
+
+        $message = \block_greeting\local\greeting_text::get_message();
         $this->content = new stdClass();
-        $this->content->text = '';
+        $renderer = $this->page->get_renderer('core');
+        $this->content->text = $renderer->render_from_template(
+            'block_greeting/content',
+            ['greeting' => $message]
+        );
+        $this->page->requires->js_call_amd('block_greeting/greeting', 'init');
         $this->content->footer = '';
         return $this->content;
+    }
+
+    /**
+     * Returns the formats supported by this block.
+     *
+     * @return array<string, bool>
+     */
+    public function applicable_formats(): array {
+        return ['all' => true];
     }
 }
